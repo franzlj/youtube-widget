@@ -18,11 +18,11 @@ This script is split into a data module, a table UI, and a widget UI. The data m
 * iCloud enabled on your iOS devices (not tested with iCloud off)
 
 ## Installation
-* Copy the scripts to your Scriptable scripts folder
-* Create a file at `Data/YouTubeFavorites.json` inside the Scriptable iCloud folder
+* Copy the scripts and Data folder to your Scriptable iCloud scripts folder
+* Edit file at `Data/YouTubeFavorites.json`
     * Configure your favorite channels with the JSON format you can find below
 * Set your YouTube Data v3 API Key as a key in Keychain accessible by Scriptable
-    * E.g. via `Keychain.set("YouTubeDatav3", "YOURAPIKEY")`
+    * E.g. via small script `Keychain.set("YouTubeDatav3", "YOURAPIKEY")` (substitute your API Key!)
 * Test setup so far with opening the `YouTube Table` script, it should display a populated list after loading
 * Add Scriptable widget to your Home Screen in a size you wish
 * Edit the widget and set `YouTube Widget` as the source script
@@ -44,3 +44,6 @@ Use the following JSON structure to configure all the YouTube channels you want 
 ## FAQ
 ### How can I configure or add new favorite channels?
 Given creating and editing a JSON file is not the best UX, the best way is to build a Siri Shortcut that can be invoked in a Share Sheet in Safari to add a channel you visited the channel page to. I will provide further instructions in a future update.
+
+### How can I find a YouTube channel identifier?
+The most straightforward way for me currently is to open the source code on a channel page and look for `<link rel="canonical" href="https://www.youtube.com/channel/CHANNELID">`, where `CHANNELID` is the identifier you want to copy. Since YouTube is a dynamically loading website, you might need to refresh the page before seeing this tag in the sources. As mentioned above, this can also be scripted into a neat Shortcut.

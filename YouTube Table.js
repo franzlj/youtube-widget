@@ -17,40 +17,40 @@ dateFormatter.useShortDateStyle()
 dateFormatter.useShortTimeStyle()
 
 let rows = videos.map(video => {
-	let date = new Date(video.publishedAt)
-	let row = new UITableRow()
-	let formattedDate = dateFormatter.string(date)
+    let date = new Date(video.publishedAt)
+    let row = new UITableRow()
+    let formattedDate = dateFormatter.string(date)
 
-	let imageCell = UITableCell.imageAtURL(video.thumbnailUrl)
-	imageCell.widthWeight = 30
-	row.addCell(imageCell)
+    let imageCell = UITableCell.imageAtURL(video.thumbnailUrl)
+    imageCell.widthWeight = 30
+    row.addCell(imageCell)
 
-	let textCell = UITableCell.text(
-		video.title,
-		video.channel + " - " + formattedDate
-	)
+    let textCell = UITableCell.text(
+        video.title,
+        video.channel + " - " + formattedDate
+    )
 
-	textCell.titleFont = Font.mediumRoundedSystemFont(16)
+    textCell.titleFont = Font.mediumRoundedSystemFont(16)
 
-	textCell.subtitleColor = Color.gray()
+    textCell.subtitleColor = Color.gray()
 
-	textCell.widthWeight = 85
+    textCell.widthWeight = 85
 
-	row.addCell(textCell)
+    row.addCell(textCell)
 
-	row.onSelect = () => {
-		Safari.open(video.videoWatchUrl)
-	}
+    row.onSelect = () => {
+        Safari.open(video.videoWatchUrl)
+    }
 
-	row.dismissOnSelect = false
-	row.cellSpacing = 12
-	row.height = 72
+    row.dismissOnSelect = false
+    row.cellSpacing = 12
+    row.height = 72
 
-	return row
+    return row
 })
 
 for (i = 0; i < rows.length; i++) {
-	table.addRow(rows[i])
+    table.addRow(rows[i])
 }
 
 table.present(false)

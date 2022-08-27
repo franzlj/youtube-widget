@@ -52,11 +52,16 @@ function addChannelToFavorites(channelInfo) {
         channelTitle: channelInfo.channelTitle
     }
 
-    var currentData = getChannelFavoritesFromFile()
+    var currentData = getChannelFavoritesFromFile(getFavoriteChannelsFileURL())
+
+    // Make sure we don't add duplicates
+    if (currentData.channels.filter(channel => channel.channelId === channelInfo.channelId)) {
+        throw new Error("Channel is already in your YouTube favorites.")
+    }
     currentData.channels.push(channelToAdd)
 
     var fileToWriteURL = getFavoriteChannelsFileURL()
-    FileManager.iCloud.writeString(fileToWriteURL, JSON.stringify(currentData))
+    FileManager.iCloud().writeString(fileToWriteURL, JSON.stringify(currentData))
 }
 
 // Reads user configured YT channels from disk via first JSON file in Data folder

@@ -42,6 +42,7 @@ if (args.shortcutParameter) {
         addChannelToFavorites(input)
     }
 } else if (config.runsInApp) {
+    console.log("Currently favorited channels:")
     console.log(readFavoriteChannelIds())
 }
 
@@ -150,6 +151,5 @@ function getFavoriteChannelsFileURL() {
 // Read favorite channels from iCloud file and return parsed contents
 function getChannelFavoritesFromFile(fileURL) {
     const channels = JSON.parse(FileManager.iCloud().readString(fileURL))
-    console.log(channels)
     return channels
 }

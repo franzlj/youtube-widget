@@ -47,3 +47,11 @@ Given creating and editing a JSON file is not the best UX, the best way is to bu
 
 ### How can I find a YouTube channel identifier?
 The most straightforward way for me currently is to open the source code on a channel page and look for `<link rel="canonical" href="https://www.youtube.com/channel/CHANNELID">`, where `CHANNELID` is the identifier you want to copy. Since YouTube is a dynamically loading website, you might need to refresh the page before seeing this tag in the sources. As mentioned above, this can also be scripted into a neat Shortcut.
+
+## Development & Customizations
+
+### VS Code Tasks
+Usually you will edit Scriptable scripts directly on your mobile device. If you want to make more advanced edits on a notebook or desktop, this repository includes a task for VSCode (macOS only) that copies the scripts to the expected Scriptable iCloud folder. This means you need to be logged in to the same iCloud account on the Mac you're editing on. After a short sync you can test your edits on your mobile devices.
+
+### Data Module Logs
+If you run the script `YouTube Data Module` within Scriptable it will log the currently favorited channel IDs.

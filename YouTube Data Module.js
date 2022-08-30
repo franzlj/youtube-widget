@@ -41,6 +41,8 @@ if (args.shortcutParameter) {
     if (input.channelId && input.channelTitle) {
         addChannelToFavorites(input)
     }
+    
+    Script.complete()
 } else if (config.runsInApp) {
     console.log("Currently favorited channels:")
     console.log(readFavoriteChannelIds())
@@ -56,13 +58,13 @@ function addChannelToFavorites(channelInfo) {
     var currentData = getChannelFavoritesFromFile(getFavoriteChannelsFileURL())
 
     // Make sure we don't add duplicates
-    if (currentData.channels.filter(channel => channel.channelId === channelInfo.channelId)) {
-        throw new Error("Channel is already in your YouTube favorites.")
+    if (currentData.channels.filter(channel => channel.channelId === channelInfo.channelId).length >= 1) {
+        throw new Error(`Channel is already in your YouTube favorites (${channelInfo.channelId})`)
     }
     currentData.channels.push(channelToAdd)
 
     var fileToWriteURL = getFavoriteChannelsFileURL()
-    FileManager.iCloud().writeString(fileToWriteURL, JSON.stringify(currentData))
+    FileManager.iCloud().writeString(fileToWriteURL, JSON.stringify(currentData, null, 4))
 }
 
 // Reads user configured YT channels from disk via first JSON file in Data folder

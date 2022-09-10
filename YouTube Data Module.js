@@ -24,7 +24,8 @@
 
 const apiKey = Keychain.get("YouTubeDatav3")
 const favoriteChannelsFilename = "YouTubeChannels.json"
-const videosToLoadPerPlaylist = 10
+const cachedVideosFilename = "YouTubeCachedWidgetVideos.json"
+const videosToLoadPerPlaylist = 5
 
 module.exports.loadFavoriteChannelVideos = async () => {
     let concatenatedChannelIds = readFavoriteChannelIds()
@@ -55,7 +56,7 @@ function addChannelToFavorites(channelInfo) {
         channelTitle: channelInfo.channelTitle
     }
 
-    var currentData = getChannelFavoritesFromFile(getFavoriteChannelsFileURL())
+    var currentData = getJSONFromFile(getFavoriteChannelsFileURL())
 
     // Make sure we don't add duplicates
     if (currentData.channels.filter(channel => channel.channelId === channelInfo.channelId).length >= 1) {
@@ -63,14 +64,13 @@ function addChannelToFavorites(channelInfo) {
     }
     currentData.channels.push(channelToAdd)
 
-    var fileToWriteURL = getFavoriteChannelsFileURL()
-    FileManager.iCloud().writeString(fileToWriteURL, JSON.stringify(currentData, null, 4))
+    writeJSONToFile(getFavoriteChannelsFileURL(), currentData)
 }
 
 // Reads user configured YT channels from disk via first JSON file in Data folder
 // of Scriptable iCloud. 
 function readFavoriteChannelIds() {
-    var channels = getChannelFavoritesFromFile(getFavoriteChannelsFileURL()).channels
+    var channels = getJSONFromFile(getFavoriteChannelsFileURL()).channels
         
     channels
         // If a widget parameter is present, use it as channel title to filter
@@ -119,6 +119,10 @@ async function loadVideos(channelIds) {
     videos
         .sort((a, b) => valueAtKeypath(a, keypath) < valueAtKeypath(b, keypath))
 
+
+    let cache = { cachedAt: Date.now(), videos: videos }
+    writeJSONToFile(getCachedVideosFileURL(), cache)
+
     return videos
 }
 
@@ -140,16 +144,30 @@ function valueAtKeypath(object, keypath) {
     return keypath.split('.').reduce((previous, current) => previous[current], object)
 }
 
+// - File Management
+
 // Provides the URL to the expected JSON file in which the favorite channels are stored.
 // This usually is "Data/YouTubeChannels.json" inside Scriptables iCloud Drive folder.
 function getFavoriteChannelsFileURL() {
-    const dataFolder = `${FileManager.iCloud().documentsDirectory()}/Data`
-    const fileURL = dataFolder + "/" + favoriteChannelsFilename
-    return fileURL
+    return getDataFolder() + "/" + favoriteChannelsFilename
+}
+
+function getCachedVideosFileURL() {
+    return getDataFolder() + "/" + cachedVideosFilename
+}
+
+function getDataFolder() {
+    return `${FileManager.iCloud().documentsDirectory()}/Data`
 }
 
 // Read favorite channels from iCloud file and return parsed contents
-function getChannelFavoritesFromFile(fileURL) {
-    const channels = JSON.parse(FileManager.iCloud().readString(fileURL))
-    return channels
+function getJSONFromFile(fileURL) {
+    return JSON.parse(FileManager.iCloud().readString(fileURL))
+}
+
+function writeJSONToFile(fileURL, object) {
+    if (typeof object !== "object") {
+        throw new Error("Expected to write an object but got other type instead.")
+    }
+    FileManager.iCloud().writeString(fileURL, JSON.stringify(object, null, 4))
 }

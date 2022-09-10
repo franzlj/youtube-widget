@@ -73,17 +73,17 @@ function readFavoriteChannelIds() {
     var channels = getChannelFavoritesFromFile(getFavoriteChannelsFileURL()).channels
         
     channels
-    // If a widget parameter is present, use it as channel title to filter
-    // for videos only of that channel.
-    .filter(channel => {
-        args.widgetParameter
-            ? channel.channelTitle == args.widgetParameter
-            : true
-        }
-    )
+        // If a widget parameter is present, use it as channel title to filter
+        // for videos only of that channel.
+        .filter(channel => {
+            args.widgetParameter
+                ? channel.channelTitle == args.widgetParameter
+                : true
+            }
+        )
     
     const channelIds = channels.map(channel => channel.channelId)
-    const concatenatedChannelIds = channelIds.reduce((prev, next) => prev + "," + next)
+    const concatenatedChannelIds = channelIds.reduce((prev, next) => `${prev},${next}`)
     return concatenatedChannelIds
 }
 
@@ -105,9 +105,7 @@ async function loadVideos(channelIds) {
         vids
             .map(video => {
                 return {
-                    videoWatchUrl: "https://www.youtube.com/embed/"
-                        + video.snippet.resourceId.videoId
-                        + "?vq=hd1440&autoplay=1",
+                    videoWatchUrl: `https://www.youtube.com/embed/${video.snippet.resourceId.videoId}?vq=hd1440&autoplay=1`,
                     title: video.snippet.title,
                     channel: video.snippet.videoOwnerChannelTitle,
                     publishedAt: video.contentDetails.videoPublishedAt,
@@ -126,14 +124,14 @@ async function loadVideos(channelIds) {
 
 // Function to get the channel details of given channel IDs
 async function loadChannels(channels) {
-    var request = new Request("https://youtube.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&id=" + channels + "&key=" + apiKey)
+    var request = new Request(`https://youtube.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&id=${channels}&key=${apiKey}`)
     var response = await request.loadJSON()
     return response.items
 }
 
 // Function to request videos of a given playlist
 async function videosOfPlaylist(playlistId, numberOfVideos) {
-    var request = new Request("https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=" + numberOfVideos + "&playlistId=" + playlistId + "&key=" + apiKey)
+    var request = new Request(`https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=${numberOfVideos}&playlistId=${playlistId}&key=${apiKey}`)
     var response = await request.loadJSON()
     return response.items
 }
@@ -145,7 +143,7 @@ function valueAtKeypath(object, keypath) {
 // Provides the URL to the expected JSON file in which the favorite channels are stored.
 // This usually is "Data/YouTubeChannels.json" inside Scriptables iCloud Drive folder.
 function getFavoriteChannelsFileURL() {
-    const dataFolder = FileManager.iCloud().documentsDirectory() + "/Data"
+    const dataFolder = `${FileManager.iCloud().documentsDirectory()}/Data`
     const fileURL = dataFolder + "/" + favoriteChannelsFilename
     return fileURL
 }

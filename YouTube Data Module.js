@@ -26,11 +26,17 @@ const apiKey = Keychain.get("YouTubeDatav3")
 const favoriteChannelsFilename = "YouTubeChannels.json"
 const cachedVideosFilename = "YouTubeCachedWidgetVideos.json"
 const videosToLoadPerPlaylist = 5
+const hoursAfterWhichToIgnoreCache = 2
 
 module.exports.loadFavoriteChannelVideos = async () => {
     let concatenatedChannelIds = readFavoriteChannelIds()
-    let videos = await loadVideos(concatenatedChannelIds)
-    return videos
+    let cache = getJSONFromFile(getCachedVideosFileURL())
+
+    if (cache && isTimestampOutdated(cache.cachedAt) === true) {
+        return await loadVideos(concatenatedChannelIds)
+    } else {
+        return cache.videos
+    }
 }
 
 // If this module is run as a script, and an input is provided, use the input to perform
@@ -89,7 +95,7 @@ function readFavoriteChannelIds() {
 
 // Loads all n last videos of the provided channels and returns
 // an array of all videos sorted by published date in a compact
-// format.
+// format. Saves loaded videos to cache.
 async function loadVideos(channelIds) {
 
     // Get Playlist IDs for all the channels
@@ -119,7 +125,6 @@ async function loadVideos(channelIds) {
     videos
         .sort((a, b) => valueAtKeypath(a, keypath) < valueAtKeypath(b, keypath))
 
-
     let cache = { cachedAt: Date.now(), videos: videos }
     writeJSONToFile(getCachedVideosFileURL(), cache)
 
@@ -142,6 +147,12 @@ async function videosOfPlaylist(playlistId, numberOfVideos) {
 
 function valueAtKeypath(object, keypath) {
     return keypath.split('.').reduce((previous, current) => previous[current], object)
+}
+
+// Checks whether the duration between now and the provided timestamp (in ms since UNIX epoch time)
+// exceeds the defined time to wait until the cache is discarded.
+function isTimestampOutdated(ms) {
+    return ((Date.now() - ms) / 1000 / 60 / 60) >= hoursAfterWhichToIgnoreCache
 }
 
 // - File Management

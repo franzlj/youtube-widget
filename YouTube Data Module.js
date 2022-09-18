@@ -45,8 +45,10 @@ if (args.shortcutParameter) {
     var input = args.shortcutParameter
 
     // Check for objects to add to the favorites
-    if (input.channelId && input.channelTitle) {
+    if (input.mode == "add" && input.channelId && input.channelTitle) {
         addChannelToFavorites(input)
+    } else if (input.mode == "remove" && input.channelId) {
+        removeChannelFromFavorites(input.channelId)
     }
     
     Script.complete()
@@ -71,6 +73,12 @@ function addChannelToFavorites(channelInfo) {
     currentData.channels.push(channelToAdd)
 
     writeJSONToFile(getFavoriteChannelsFileURL(), currentData)
+}
+
+function removeChannelFromFavorites(channelId) {
+    var favorites = getJSONFromFile(getFavoriteChannelsFileURL())
+    favorites.channels = favorites.channels.filter(channel => channel.channelId != channelId)
+    writeJSONToFile(getFavoriteChannelsFileURL(), favorites)
 }
 
 // Reads user configured YT channels from disk via first JSON file in Data folder

@@ -7,10 +7,12 @@ Widget that displays the videos of a configured set of favorite channels in iOS 
 ### Features
 * Fully chronological timeline of your favorite channels
 * Opens clean embedded player in Safari with high video pre-selected
+* Caches data to reduce network and energy usage for widget refreshes
+* Ability to add and remove favorite channels with Shortcuts
 * Combine with your favorite YouTube Safari Extensions for the best viewing experience, for example [Pipifier](https://github.com/arnoappenzeller/PiPifier)
 
 ## How it works
-This script is split into a data module, a table UI, and a widget UI. The data module will use the API Key to query the YouTube API for the channels you configured. Then it loads the main Uploads playlist for those channels and collects the latest videos, before putting it all together in a personalized feed that is displayed via the UI scripts.
+This script is split into a data module, a table UI, and a widget UI. The data module will use the API Key to query the YouTube API for the channels you configured. Then it loads the main Uploads playlist for those channels and collects the latest videos, before putting it all together in a personalized feed that is displayed via the UI scripts. The loaded videos are also cached in a file in iCloud, so that only after a certain amount of time (1 hour), the network is consulted again, else this file is read instead.
 
 ## Requirements
 * [Scriptable.app](https://scriptable.app) from the App Store
@@ -26,6 +28,9 @@ This script is split into a data module, a table UI, and a widget UI. The data m
 * Test setup so far with opening the `YouTube Table` script, it should display a populated list after loading
 * Add Scriptable widget to your Home Screen in a size you wish
 * Edit the widget and set `YouTube Widget` as the source script
+
+## Adding & Removing Channels
+* Run Script `YouTube Data Module` in Shortcuts with an input of a dictionary that contains `mode`, `channelId` and in case of adding a channel, `channelTitle`
 
 ### Favorite Channels JSON Structure
 Use the following JSON structure to configure all the YouTube channels you want to see the videos of in the feed of your widget.
